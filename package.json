@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/joelyjoel/js-piano-roll#readme",
   "dependencies": {
+    "gcd": "0.0.1",
     "midi-converter": "^0.1.5"
   }
 }
