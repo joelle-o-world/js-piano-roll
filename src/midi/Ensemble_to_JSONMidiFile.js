@@ -1,5 +1,5 @@
-function TrackGroup_to_JSONMidiFile(group){
-    group = new TrackGroup(group);
+function Ensemble_to_JSONMidiFile(group){
+    group = new Ensemble(group);
     for(var i in group.tracks) {
         if(!group.tracks[i].isAPianoRoll) {
             group.tracks[i] = group.tracks[i].toPianoRoll();
@@ -22,4 +22,4 @@ function TrackGroup_to_JSONMidiFile(group){
         "tracks": tracks
     }
 }
-module.exports = TrackGroup_to_JSONMidiFile
+module.exports = Ensemble_to_JSONMidiFile

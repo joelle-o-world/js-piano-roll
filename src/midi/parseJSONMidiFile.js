@@ -1,6 +1,6 @@
 function parseJSONMidiFile(file, supressConsole) {
     var meterTrack = new MeterTrack();
-    var result = new TrackGroup();
+    var result = new Ensemble();
     var trackN = 0;
     for(var i in file.tracks) {
       var track = parseJSONMidiTrack(file.tracks[i], file.header, meterTrack, supressConsole);

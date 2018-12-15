@@ -1,7 +1,7 @@
 // REQUIRES ARE AT THE BOTTOM
 
 /* PianoRoll:
-    stores an array of `PianoRoll.Note`s with attached time, duration and sound values
+    stores an array of PianoRoll.Note`s with attached time, duration and sound values
     The main class for storing musical information
 */
 
