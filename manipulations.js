@@ -3,9 +3,9 @@ var make_roll = require("../make_roll.js")
 
 var utility = require("../utility.js");
 
-module.exports = (PointTrack) => {
+module.exports = (PianoRoll) => {
 
-  PointTrack.prototype.stretch = function(scaleFactor) {
+  PianoRoll.prototype.stretch = function(scaleFactor) {
       if(!scaleFactor) return;
       if(this._d) this.d *= scaleFactor;
       for(var i in this.notes) {
@@ -14,18 +14,18 @@ module.exports = (PointTrack) => {
       }
       return this;
   }
-  PointTrack.prototype.stretchToFit = function(d) {
+  PianoRoll.prototype.stretchToFit = function(d) {
       var sf = d/this.d;
       return this.stretch(sf);
   }
 
 
-  PointTrack.prototype.cut = function(t1, t2, keepOverhangs) {
+  PianoRoll.prototype.cut = function(t1, t2, keepOverhangs) {
     var newTrack = new this.constructor(this).zerofy();
     newTrack.d = t2-t1;
     for(var i=0; i<this.notes.length; i++) {
       if(this.notes[i].t >= t1 && this.notes[i].t < t2) {
-        var newNote = new PointTrack.Note(this.notes[i]);
+        var newNote = new PianoRoll.Note(this.notes[i]);
         if(newNote.tOff > t2) {
             newNote.tOff = t2;
         }
@@ -33,7 +33,7 @@ module.exports = (PointTrack) => {
         newTrack.mix(newNote);
       } else if(keepOverhangs) {
         if(this.notes[i].t < t1 && this.notes[i].tOff > t1) {
-            var newNote = new PointTrack.Note(this.notes[i]);
+            var newNote = new PianoRoll.Note(this.notes[i]);
             newNote.t = t1;
             newNote.tOff = this.notes[i].tOff;
             if(newNote.tOff > t2) {
@@ -46,13 +46,13 @@ module.exports = (PointTrack) => {
     return newTrack;
   }
 
-  PointTrack.prototype.transpose = function(semitones) {
+  PianoRoll.prototype.transpose = function(semitones) {
     for(var i in this.notes) {
       this.notes[i].transpose(semitones)
     }
     return this
   }
-  PointTrack.prototype.rotate = function(timeshift) {
+  PianoRoll.prototype.rotate = function(timeshift) {
     var d = this.d
     timeshift %= d
     for(var i in this.notes) {
@@ -64,7 +64,7 @@ module.exports = (PointTrack) => {
     }
     return this;
   }
-  PointTrack.prototype.loop = function(d) {
+  PianoRoll.prototype.loop = function(d) {
     var n = Math.ceil(d/this.d)
     var newTrack = new this.constructor()
     newTrack.d = 0
@@ -74,11 +74,11 @@ module.exports = (PointTrack) => {
     newTrack.label = this.label + " (looped)"
     return newTrack
   }
-  PointTrack.prototype.loopN = function(n) {
+  PianoRoll.prototype.loopN = function(n) {
     return this.loop(n * this.d)
   }
 
-  PointTrack.prototype.clear = function(t0, t1) {
+  PianoRoll.prototype.clear = function(t0, t1) {
     var newNotes = []
     for(var i=0; i<this.notes.length; i++) {
       var note = this.notes[i]
@@ -94,18 +94,18 @@ module.exports = (PointTrack) => {
     this.notes = newNotes
   }
 
-  PointTrack.prototype.blank = function(d) {
+  PianoRoll.prototype.blank = function(d) {
       this.notes = [];
       this._d = d;
       return this;
   }
-  PointTrack.prototype.zerofy = function() {
+  PianoRoll.prototype.zerofy = function() {
       this.notes = [];
       this._d = undefined;
       return this;
   }
 
-  PointTrack.prototype.emptyFill = function(d) {
+  PianoRoll.prototype.emptyFill = function(d) {
       if(d == undefined) {
           this.d = undefined;
           d = this.d;
@@ -113,7 +113,7 @@ module.exports = (PointTrack) => {
       this.d = d;
   }
 
-  PointTrack.prototype.insertBlank = function(d, t) { // duration, time
+  PianoRoll.prototype.insertBlank = function(d, t) { // duration, time
       if(t == undefined) {
           t = 0;
       }
@@ -126,28 +126,28 @@ module.exports = (PointTrack) => {
       this.notes = pre.notes;
       return this;
   }
-  PointTrack.prototype.insert = function(material, t) {
+  PianoRoll.prototype.insert = function(material, t) {
       var d = material.d;
       this.insertBlank(d, t);
       this.mix(material, t);
       return this;
   }
-  PointTrack.prototype.overwrite = function(material, t) {
+  PianoRoll.prototype.overwrite = function(material, t) {
       var d = material.d;
       this.clear(t + (material.d || 0), t + d + (material.d || 0));
       this.mix(material, t);
       console.log(t, material.sound);
       return this;
   }
-  PointTrack.prototype.mix = function(material, t) {
+  PianoRoll.prototype.mix = function(material, t) {
       if(t == undefined) {
           t = 0;
       }
-      if(material.isAPointTrack) {
+      if(material.isAPianoRoll) {
           for(var i in material.notes) {
               this.mix(material.notes[i], t);
           }
-      } else if(material.isAPointTrackNote) {
+      } else if(material.isAPianoRollNote) {
           var newNote = new material.constructor(material);
           newNote.t += t;
           var i = 0;
@@ -155,24 +155,24 @@ module.exports = (PointTrack) => {
               i++;
           this.notes.splice(i, 0, newNote);
       } else if(material.isAStepTrack) {
-          //console.log("eeks experimental: mixing StepTrack into PointTrack")
-          this.mix(material.toPointTrack(), t);
+          //console.log("eeks experimental: mixing StepTrack into PianoRoll")
+          this.mix(material.toPianoRoll(), t);
       }
       return this;
   }
-  PointTrack.prototype.append = function(material) {
+  PianoRoll.prototype.append = function(material) {
       this.mix(material, this.d);
       if(this._d != undefined || material._d != undefined) this._d += material.d;
       return this;
   }
 
 
-  PointTrack.prototype.rollNote = function(note, n) {
+  PianoRoll.prototype.rollNote = function(note, n) {
     var noteI;
     if(typeof note == "number") {
       noteI = note;
       note = this.notes[noteI];
-    } else if(note.isAPointTrackNote) {
+    } else if(note.isAPianoRollNote) {
       noteI = this.notes.indexOf(note);
     }
     if(noteI < 0 || noteI >= this.notes.length) {
@@ -198,7 +198,7 @@ module.exports = (PointTrack) => {
     return this;
   }
 
-  PointTrack.prototype.rollRandomNote = function(n) {
+  PianoRoll.prototype.rollRandomNote = function(n) {
     n = n || 10
     n = Math.floor(Math.random()*n)
     var i = Math.floor(this.notes.length*Math.random())

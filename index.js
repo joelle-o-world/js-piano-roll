@@ -1,25 +1,24 @@
 // REQUIRES ARE AT THE BOTTOM
 
-/* PointTrack:
-    stores an array of `PointTrack.Note`s with attached time, duration and sound values
+/* PianoRoll:
+    stores an array of `PianoRoll.Note`s with attached time, duration and sound values
     The main class for storing musical information
 */
 
-console.log("USING NEW VERSION of PointTrack")
 
-function PointTrack(model, stepD) {
+function PianoRoll(model, stepD) {
   this.notes = new Array();
   this._d = undefined;
   this.sorted = true;
   this.label;
   if(model != undefined) {
     if(model.constructor == String)
-      model = PointTrack.fromSteps(model, stepD)
+      model = PianoRoll.fromSteps(model, stepD)
 
     if(model.isAStepTrack)
-        model = model.toPointTrack();
+        model = model.toPianoRoll();
 
-    if(model.isAPointTrack) {
+    if(model.isAPianoRoll) {
         this._d = model._d;
         this.sorted = model.sorted;
         this.label = utility.duplicate(model.label);
@@ -29,19 +28,19 @@ function PointTrack(model, stepD) {
     }
   }
 }
-module.exports = PointTrack; // must come before requires!
+module.exports = PianoRoll; // must come before requires!
 
-PointTrack.Note = require("./Note.js")
-require("./manipulations.js")(PointTrack)
-require("./measurements.js")(PointTrack)
+PianoRoll.Note = require("./Note.js")
+require("./manipulations.js")(PianoRoll)
+require("./measurements.js")(PianoRoll)
 
-PointTrack.prototype.isAPointTrack = true;
-PointTrack.prototype.isPointTrack = true;
+PianoRoll.prototype.isAPianoRoll = true;
+PianoRoll.prototype.isPianoRoll = true;
 
-PointTrack.prototype.quick = function(d) {
+PianoRoll.prototype.quick = function(d) {
     d = d || 1;
     for(var i=1; i<arguments.length; i++) {
-        var note = new PointTrack.Note();
+        var note = new PianoRoll.Note();
         note.sound = arguments[i];
         note.d = d;
         note.t = this.d;
@@ -49,12 +48,12 @@ PointTrack.prototype.quick = function(d) {
         this.notes.push(note);
     }
 }
-PointTrack.fromTs = function(times, sound, d) {
+PianoRoll.fromTs = function(times, sound, d) {
   sound = sound || true;
   times = times.sort();
-  var track = new PointTrack();
+  var track = new PianoRoll();
   for(var i in times) {
-    var note = new PointTrack.Note();
+    var note = new PianoRoll.Note();
     note.sound = utility.duplicate(sound);
     note.d = d;
     note.t = times[i];
@@ -62,12 +61,12 @@ PointTrack.fromTs = function(times, sound, d) {
   }
   return track;
 }
-PointTrack.fromSteps = function(steps, dStep) {
+PianoRoll.fromSteps = function(steps, dStep) {
   if(steps.constructor == String) {
     steps = steps.split(" ")
   }
   dStep = dStep || 1
-  var track = new PointTrack()
+  var track = new PianoRoll()
   var currentNote
   for(var i=0; i<steps.length; i++) {
     var sound = steps[i]
@@ -86,7 +85,7 @@ PointTrack.fromSteps = function(steps, dStep) {
         currentNote.d = t-currentNote.t
         track.notes.push(currentNote)
       }
-      currentNote = new PointTrack.Note()
+      currentNote = new PianoRoll.Note()
       currentNote.t = t
       currentNote.sound = sound
     }
@@ -104,7 +103,7 @@ PointTrack.fromSteps = function(steps, dStep) {
 
 
 
-PointTrack.prototype.__defineGetter__("smallestPulse", function() {
+PianoRoll.prototype.__defineGetter__("smallestPulse", function() {
   var ts = this.Ts
   try {
     return gcd(ts)
@@ -115,7 +114,7 @@ PointTrack.prototype.__defineGetter__("smallestPulse", function() {
 })
 
 
-PointTrack.prototype.mapSounds = function(funcOrObj) {
+PianoRoll.prototype.mapSounds = function(funcOrObj) {
   // UNTESTED!!
   var sounds = this.sounds;
   if(typeof funcOrObj == "function") {
@@ -127,11 +126,11 @@ PointTrack.prototype.mapSounds = function(funcOrObj) {
       sounds[i] = funcOrObj[sounds[i]] || sounds[i];
     }
   }
-  var newTrack = new PointTrack(this);
+  var newTrack = new PianoRoll(this);
   newTrack.sounds = sounds;
   return newTrack;
 }
-PointTrack.prototype.mapSoundsToSelf = function(funcOrObj) {
+PianoRoll.prototype.mapSoundsToSelf = function(funcOrObj) {
   // UNTESTED!!
   var sounds = this.sounds;
   if(typeof funcOrObj == "function") {
@@ -146,11 +145,11 @@ PointTrack.prototype.mapSoundsToSelf = function(funcOrObj) {
   this.sounds = sounds;
   return this;
 }
-PointTrack.prototype.makeGamutDisjointTo = function(gamut2, onlyStrings) {
+PianoRoll.prototype.makeGamutDisjointTo = function(gamut2, onlyStrings) {
   // useful for mixing drum patterns which are not supposed to share samples
   onlyStrings = (onlyStrings == undefined)? true : onlyStrings;
   var gamut1 = this.gamut;
-  if(gamut2.isAPointTrack)
+  if(gamut2.isAPianoRoll)
     gamut2 = gamut2.gamut;
 
   var map = {};
@@ -167,7 +166,7 @@ PointTrack.prototype.makeGamutDisjointTo = function(gamut2, onlyStrings) {
 }
 
 
-PointTrack.prototype.soundsAtT = function(t) {
+PianoRoll.prototype.soundsAtT = function(t) {
   var sounding = this.select(t)
   var sound = []
   for(var i in sounding.notes)
@@ -175,7 +174,7 @@ PointTrack.prototype.soundsAtT = function(t) {
 
   return sound
 }
-PointTrack.prototype.soundAtT = function(t) {
+PianoRoll.prototype.soundAtT = function(t) {
     var sounding = this.select(t);
     var sound = [];
     for(var i in sounding.notes)
@@ -183,7 +182,7 @@ PointTrack.prototype.soundAtT = function(t) {
 
     return sound.length<=1 ? sound[0] : sound;
 }
-PointTrack.prototype.sound = function(t) {
+PianoRoll.prototype.sound = function(t) {
     for(var i=0; i<this.notes.length; i++) {
         if(this.notes[i].t > t) {
             return i > 0 ? this.notes[i-1].sound : false;
@@ -191,31 +190,31 @@ PointTrack.prototype.sound = function(t) {
     }
     return this.notes.length ? this.notes[this.notes.length-1].sound : false;
 }
-PointTrack.prototype.__defineGetter__("firstSound", function() {
+PianoRoll.prototype.__defineGetter__("firstSound", function() {
     if(this.notes[0])
         return this.notes[0].sound;
     else
         return false;
 });
-PointTrack.prototype.__defineGetter__("lastSound", function() {
+PianoRoll.prototype.__defineGetter__("lastSound", function() {
     if(this.notes.length)
         return this.notes[this.notes.length-1];
     else
         return false;
 });
-PointTrack.prototype.__defineGetter__("lastNote", function() {
+PianoRoll.prototype.__defineGetter__("lastNote", function() {
   if(this.notes.length)
     return this.notes[this.notes.length-1]
   else
     return false
 })
-PointTrack.prototype.__defineGetter__("firstNote", function() {
+PianoRoll.prototype.__defineGetter__("firstNote", function() {
   if(this.notes.length)
     return this.notes[0]
   else
     return false
 })
-PointTrack.prototype.__defineGetter__("firstP", function() {
+PianoRoll.prototype.__defineGetter__("firstP", function() {
     for(var i in this.notes) {
         if(this.notes[i].sound.constructor == Number) {
             return this.notes[i].sound;
@@ -229,7 +228,7 @@ PointTrack.prototype.__defineGetter__("firstP", function() {
     }
     return false;
 });
-PointTrack.prototype.__defineGetter__("lastP", function() {
+PianoRoll.prototype.__defineGetter__("lastP", function() {
     for(var i=this.notes.length-1; i >= 0; i--) {
         if(this.notes[i].sound.constructor == Number)
             return this.notes[i].sound;
@@ -243,19 +242,19 @@ PointTrack.prototype.__defineGetter__("lastP", function() {
     return false;
 });
 
-PointTrack.prototype.arpPoke = function(n, harmony, gamut, subD) {
+PianoRoll.prototype.arpPoke = function(n, harmony, gamut, subD) {
     this.qPoke(n, gamut, subD);
     Arp(this, harmony);
     return this;
 }
-PointTrack.prototype.qPoke = function(n, gamut, subD) {
+PianoRoll.prototype.qPoke = function(n, gamut, subD) {
     subD = subD || 1;
     gamut = gamut || [">s1", ">s-1", "<h0", "<h1", "<h-1", "<h2", "<h-2"];
 
     var q = new Arp.Q(gamut[Math.floor(Math.random()*gamut.length)]);
     var t = Math.floor(Math.random()*this.d/subD)*subD;
 
-    var note = new PointTrack.Note();
+    var note = new PianoRoll.Note();
     note.sound = q;
     note.t = 0;
     note.d = t+subD<=this.d ? subD : this.d-t;
@@ -266,7 +265,7 @@ PointTrack.prototype.qPoke = function(n, gamut, subD) {
     else return this;
 }
 
-PointTrack.prototype.countAttacks = function(t0, t1) {
+PianoRoll.prototype.countAttacks = function(t0, t1) {
     t0 = t0 || 0;
     t1 = t1 || this.d;
     var n = 0;
@@ -277,14 +276,14 @@ PointTrack.prototype.countAttacks = function(t0, t1) {
 }
 
 // special point track functions (as opposed to StepTrack)
-PointTrack.prototype.saveMidiFile = function(filename) {
+PianoRoll.prototype.saveMidiFile = function(filename) {
     if(filename == undefined) {
         throw "no filename provided";
         return ;
     }
-    midi.PointTrack_saveMidiFile(this, filename);
+    midi.PianoRoll_saveMidiFile(this, filename);
 }
-PointTrack.prototype.save = function(filename, subdir) {
+PianoRoll.prototype.save = function(filename, subdir) {
     // not tested
     filename = filename || this.label || "pointtrack.mid";
     if(filename.slice(filename.length-4) != ".mid")
@@ -293,17 +292,17 @@ PointTrack.prototype.save = function(filename, subdir) {
     var path = organise.chooseFilename(filename, subdir);
     this.saveMidiFile(path);
 }
-PointTrack.prototype.toStepTrack = function() {
-    return convertTracks.PointTrack_to_StepTrack(this);
+PianoRoll.prototype.toStepTrack = function() {
+    return convertTracks.PianoRoll_to_StepTrack(this);
 }
-PointTrack.prototype.sortNotes = function() {
+PianoRoll.prototype.sortNotes = function() {
     this.notes = this.notes.sort(function(a,b) {
         return a.t - b.t;
     });
     this.sorted = true;
     return this;
 }
-PointTrack.prototype.checkNotesAreSorted = function() {
+PianoRoll.prototype.checkNotesAreSorted = function() {
     for(var i=1; i<this.notes.length; i++) {
         if(this.notes[i-1].t > this.notes[i].t) {
             console.log("Notes are not sorted!");
@@ -313,7 +312,7 @@ PointTrack.prototype.checkNotesAreSorted = function() {
         }
     }
 }
-PointTrack.prototype.removeNonNumberNotes = function() {
+PianoRoll.prototype.removeNonNumberNotes = function() {
   var newNotes = []
   var removedNotes = []
   for(var i in this.notes) {
@@ -326,12 +325,12 @@ PointTrack.prototype.removeNonNumberNotes = function() {
   this.notes = newNotes
   return removedNotes
 }
-PointTrack.prototype.splitArraySounds = function() {
+PianoRoll.prototype.splitArraySounds = function() {
   var newNotes = []
   for(var i in this.notes) {
     if(this.notes[i].sound && this.notes[i].sound.constructor == Array) {
       for(var j in this.notes[i].sound) {
-        var note = new PointTrack.Note(this.notes[i])
+        var note = new PianoRoll.Note(this.notes[i])
         note.sound = this.notes[i].sound[j]
         newNotes.push( note )
       }
@@ -339,11 +338,11 @@ PointTrack.prototype.splitArraySounds = function() {
       newNotes.push( this.notes[i] )
     }
   }
-  var newTrack = new PointTrack(this)
+  var newTrack = new PianoRoll(this)
   newTrack.notes = newNotes
   return newTrack
 }
-PointTrack.prototype.select = function(t1, t2) {
+PianoRoll.prototype.select = function(t1, t2) {
     if(t2 == undefined) {
         t2 = t1;
     }
@@ -360,7 +359,7 @@ PointTrack.prototype.select = function(t1, t2) {
     newTrack.label = this.label + " selection";
     return newTrack;
 }
-PointTrack.prototype.__defineGetter__("octaveProfile", function() {
+PianoRoll.prototype.__defineGetter__("octaveProfile", function() {
     var op = {};
     for(var i in this.notes) {
       if(this.notes[i].sound.constructor == Number) {
@@ -381,7 +380,7 @@ PointTrack.prototype.__defineGetter__("octaveProfile", function() {
     }
     return op2;
 });
-PointTrack.prototype.__defineGetter__("octaveProfileStatistics", function() {
+PianoRoll.prototype.__defineGetter__("octaveProfileStatistics", function() {
   var stats = {}
   for(var i in this.notes) {
     var noteOp = this.notes[i].octaveProfileStatistics
@@ -390,7 +389,7 @@ PointTrack.prototype.__defineGetter__("octaveProfileStatistics", function() {
   }
   return stats
 })
-PointTrack.prototype.__defineGetter__("bass", function() {
+PianoRoll.prototype.__defineGetter__("bass", function() {
     // returns lowest pitch in the track as a midi number
     var winner = undefined;
     for(var i in this.notes) {
@@ -406,7 +405,7 @@ PointTrack.prototype.__defineGetter__("bass", function() {
 
 
 
-PointTrack.prototype.randomNote = function() {
+PianoRoll.prototype.randomNote = function() {
   if(this.notes.length == 0)
     return null
   return this.notes[Math.floor(Math.random()*this.notes.length)]

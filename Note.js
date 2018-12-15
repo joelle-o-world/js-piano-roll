@@ -13,7 +13,7 @@ Note = function(model, t, d) {
     this.t = undefined;
     this.d = undefined;
 
-    if(model != undefined && model.isAPointTrackNote) {
+    if(model != undefined && model.isAPianoRollNote) {
       if(model.bpm)
         this.bpm = model.bpm
 
@@ -33,8 +33,8 @@ Note = function(model, t, d) {
 module.exports = Note
 
 
-Note.prototype.isAPointTrackNote = true;
-Note.prototype.isPointTrackNote = true
+Note.prototype.isAPianoRollNote = true;
+Note.prototype.isPianoRollNote = true
 Note.prototype.__defineGetter__("tOff", function() {
     if(this.t == undefined) {
         return undefined;
