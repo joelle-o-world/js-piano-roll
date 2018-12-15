@@ -33,6 +33,7 @@ module.exports = PianoRoll; // must come before requires!
 PianoRoll.Note = require("./Note.js")
 require("./manipulations.js")(PianoRoll)
 require("./measurements.js")(PianoRoll)
+require("./saveMidiFile.js")(PianoRoll)
 
 PianoRoll.prototype.isAPianoRoll = true;
 PianoRoll.prototype.isPianoRoll = true;
@@ -276,22 +277,7 @@ PianoRoll.prototype.countAttacks = function(t0, t1) {
 }
 
 // special point track functions (as opposed to StepTrack)
-PianoRoll.prototype.saveMidiFile = function(filename) {
-    if(filename == undefined) {
-        throw "no filename provided";
-        return ;
-    }
-    midi.PianoRoll_saveMidiFile(this, filename);
-}
-PianoRoll.prototype.save = function(filename, subdir) {
-    // not tested
-    filename = filename || this.label || "pointtrack.mid";
-    if(filename.slice(filename.length-4) != ".mid")
-        filename += ".mid";
-    subdir = subdir || "mididump";
-    var path = organise.chooseFilename(filename, subdir);
-    this.saveMidiFile(path);
-}
+
 PianoRoll.prototype.toStepTrack = function() {
     return convertTracks.PianoRoll_to_StepTrack(this);
 }
@@ -418,8 +404,6 @@ var duplicate = require("./duplicate.js");
 var VoiceTrack = require("../VoiceTrack.js");
 var convertTracks = require("../convertTracks.js");
 var pitch = require("../pitch.js");
-var midi = require("../midi.js");
-var organise = require("../../organise.js");
 var Arp = require("../Arp.js");
 var parseSound = require("../parseSound.js")
 const gcd = require("compute-gcd")
