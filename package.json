@@ -1,0 +1,27 @@
+{
+  "name": "js-piano-roll",
+  "version": "1.0.0",
+  "description": "A piano roll class for storing and manipulating not-level musical information in javascript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joelyjoel/js-piano-roll.git"
+  },
+  "keywords": [
+    "midi",
+    "piano",
+    "roll"
+  ],
+  "author": "Joel Plow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joelyjoel/js-piano-roll/issues"
+  },
+  "homepage": "https://github.com/joelyjoel/js-piano-roll#readme",
+  "dependencies": {
+    "midi-converter": "^0.1.5"
+  }
+}
