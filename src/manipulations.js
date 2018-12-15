@@ -143,18 +143,18 @@ module.exports = (PianoRoll) => {
       if(t == undefined) {
           t = 0;
       }
-      if(material.isAPianoRoll) {
+      if(material.isPianoRoll) {
           for(var i in material.notes) {
               this.mix(material.notes[i], t);
           }
-      } else if(material.isAPianoRollNote) {
+      } else if(material.isPianoRollNote) {
           var newNote = new material.constructor(material);
           newNote.t += t;
           var i = 0;
           while(i<this.notes.length && this.notes[i].t <= newNote.t)
               i++;
           this.notes.splice(i, 0, newNote);
-      } else if(material.isAStepTrack) {
+      } else if(material.isStepTrack) {
           //console.log("eeks experimental: mixing StepTrack into PianoRoll")
           this.mix(material.toPianoRoll(), t);
       }
@@ -172,7 +172,7 @@ module.exports = (PianoRoll) => {
     if(typeof note == "number") {
       noteI = note;
       note = this.notes[noteI];
-    } else if(note.isAPianoRollNote) {
+    } else if(note.isPianoRollNote) {
       noteI = this.notes.indexOf(note);
     }
     if(noteI < 0 || noteI >= this.notes.length) {

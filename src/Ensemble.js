@@ -3,18 +3,17 @@ function Ensemble(model) {
 
   if(model != undefined && model.isEnsemble) {
     for(var i in model.tracks) {
-      this.tracks[i] = utility.duplicate(model.tracks[i])
+      this.tracks[i] = duplicate(model.tracks[i])
     }
   }
 }
 
 module.exports = Ensemble;
 
-var utility = require("./utility.js")
+var duplicate = require("./duplicate.js")
 var StepTrack = require("./StepTrack.js");
 var PointTrack = require("./PointTrack.js");
-var midi = require("./midi.js");
-var organise = require("../organise.js");
+var midi = require("./midi");
 const Instrument = require("./Instrument.js")
 const gcd = require("compute-gcd")
 
@@ -53,7 +52,7 @@ Ensemble.blankGrid = function(nWidth, n, subD, sound) {
       var note = new PointTrack.Note()
       note.t = t
       note.d = subD
-      note.sound = utility.duplicate(sound)
+      note.sound = duplicate(sound)
       group.tracks[c].mix(note)
     }
   }
@@ -228,7 +227,7 @@ Ensemble.prototype.rotate = function(angle) {
 Ensemble.prototype.__defineGetter__("matrix", function() {
     var matrix = {};
     for(var c in this.tracks) {
-        if(this.tracks[c].isAStepTrack)
+        if(this.tracks[c].isStepTrack)
             matrix[c] = this.tracks[c].steps;
         else
             console.log("skipped incompatible matrix track");
@@ -281,12 +280,6 @@ Ensemble.prototype.mixDown = function() {
 }
 Ensemble.prototype.saveMidiFile = function(filename) {
     midi.Ensemble_saveMidiFile(this, filename);
-}
-Ensemble.prototype.save = function(filename, subdir) {
-    filename = (filename || this.label) +  ".mid";
-    subdir = subdir || "mididump";
-    var path = organise.chooseFilename(filename, subdir);
-    this.saveMidiFile(path);
 }
 
 Ensemble.prototype.checkNotesAreSorted = function() {

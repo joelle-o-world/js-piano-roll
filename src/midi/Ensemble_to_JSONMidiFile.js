@@ -1,7 +1,7 @@
 function Ensemble_to_JSONMidiFile(group){
     group = new Ensemble(group);
     for(var i in group.tracks) {
-        if(!group.tracks[i].isAPianoRoll) {
+        if(!group.tracks[i].isPianoRoll) {
             group.tracks[i] = group.tracks[i].toPianoRoll();
         }
     }
