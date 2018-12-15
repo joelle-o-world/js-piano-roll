@@ -1,4 +1,4 @@
-const utility = require("../utility.js")
+const duplicate = require("./duplicate.js")
 
 
 const possibleNoteProperties = [
@@ -20,11 +20,11 @@ Note = function(model, t, d) {
       for(var i in possibleNoteProperties) {
         var prop = possibleNoteProperties[i]
         if(model[prop] != undefined) {
-          this[prop] = utility.duplicate(model[prop])
+          this[prop] = duplicate(model[prop])
         }
       }
     } else if(model != undefined) {
-      this.sound = utility.duplicate(model)
+      this.sound = duplicate(model)
       this.t = t
       this.d = d
     }

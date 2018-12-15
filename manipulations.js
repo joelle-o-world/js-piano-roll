@@ -1,7 +1,7 @@
 
 var make_roll = require("../make_roll.js")
 
-var utility = require("../utility.js");
+const duplicate = require("./duplicate.js")
 
 module.exports = (PianoRoll) => {
 
@@ -189,7 +189,7 @@ module.exports = (PianoRoll) => {
 
     var roll = make_roll(note.d, n);
     for(var i in roll.notes) {
-      roll.notes[i].sound = utility.duplicate(note.sound);
+      roll.notes[i].sound = duplicate(note.sound);
     }
     this.notes.splice(noteI, 1);
 

@@ -21,10 +21,10 @@ function PianoRoll(model, stepD) {
     if(model.isAPianoRoll) {
         this._d = model._d;
         this.sorted = model.sorted;
-        this.label = utility.duplicate(model.label);
-        this.notes = utility.duplicate(model.notes);
+        this.label = duplicate(model.label);
+        this.notes = duplicate(model.notes);
         if(model.instrument)
-          this.instrument = utility.duplicate(model.instrument)
+          this.instrument = duplicate(model.instrument)
     }
   }
 }
@@ -54,7 +54,7 @@ PianoRoll.fromTs = function(times, sound, d) {
   var track = new PianoRoll();
   for(var i in times) {
     var note = new PianoRoll.Note();
-    note.sound = utility.duplicate(sound);
+    note.sound = duplicate(sound);
     note.d = d;
     note.t = times[i];
     track.notes.push(note);
@@ -414,7 +414,7 @@ PianoRoll.prototype.randomNote = function() {
 
 
 
-var utility = require("../utility.js");
+var duplicate = require("./duplicate.js");
 var VoiceTrack = require("../VoiceTrack.js");
 var convertTracks = require("../convertTracks.js");
 var pitch = require("../pitch.js");
