@@ -153,9 +153,6 @@ module.exports = (PianoRoll) => {
           while(i<this.notes.length && this.notes[i].t <= newNote.t)
               i++;
           this.notes.splice(i, 0, newNote);
-      } else if(material.isStepTrack) {
-          //console.log("eeks experimental: mixing StepTrack into PianoRoll")
-          this.mix(material.toPianoRoll(), t);
       }
       return this;
   }

@@ -11,7 +11,6 @@ function Ensemble(model) {
 module.exports = Ensemble;
 
 var duplicate = require("./duplicate.js")
-var StepTrack = require("./StepTrack.js");
 var PointTrack = require("./PointTrack.js");
 var midi = require("./midi");
 const Instrument = require("./Instrument.js")
@@ -223,17 +222,6 @@ Ensemble.prototype.rotate = function(angle) {
     }
     return this;
 }
-
-Ensemble.prototype.__defineGetter__("matrix", function() {
-    var matrix = {};
-    for(var c in this.tracks) {
-        if(this.tracks[c].isStepTrack)
-            matrix[c] = this.tracks[c].steps;
-        else
-            console.log("skipped incompatible matrix track");
-    }
-    return matrix;
-})
 Ensemble.prototype.__defineGetter__("numberedTracks", function() {
     var list = [];
     for(var i in this.tracks) {

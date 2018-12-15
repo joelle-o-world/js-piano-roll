@@ -15,9 +15,6 @@ function PianoRoll(model, stepD) {
     if(model.constructor == String)
       model = PianoRoll.fromSteps(model, stepD)
 
-    if(model.isStepTrack)
-        model = model.toPianoRoll();
-
     if(model.isPianoRoll) {
         this._d = model._d;
         this.sorted = model.sorted;
@@ -33,7 +30,7 @@ module.exports = PianoRoll; // must come before requires!
 PianoRoll.Note = require("./Note.js")
 require("./manipulations.js")(PianoRoll)
 require("./measurements.js")(PianoRoll)
-require("./saveMidiFile.js")(PianoRoll)
+//require("./saveMidiFile.js")(PianoRoll)
 
 PianoRoll.prototype.isPianoRoll = true;
 PianoRoll.prototype.isPianoRoll = true;
@@ -74,9 +71,10 @@ PianoRoll.fromSteps = function(steps, dStep) {
     if(!sound || sound == ".")
       continue
     if(sound.constructor == String) {
-      if(sound[0] == "_")
+      /*if(sound[0] == "_")
         sound = new Arp.Q(sound.slice(1))
-      else if(sound.match(/^[\d.]*$/))
+      else */
+      if(sound.match(/^[\d.]*$/))
         sound = parseFloat(sound)
     }
 
@@ -144,25 +142,6 @@ PianoRoll.prototype.mapSoundsToSelf = function(funcOrObj) {
     }
   }
   this.sounds = sounds;
-  return this;
-}
-PianoRoll.prototype.makeGamutDisjointTo = function(gamut2, onlyStrings) {
-  // useful for mixing drum patterns which are not supposed to share samples
-  onlyStrings = (onlyStrings == undefined)? true : onlyStrings;
-  var gamut1 = this.gamut;
-  if(gamut2.isPianoRoll)
-    gamut2 = gamut2.gamut;
-
-  var map = {};
-  for(var i in gamut1) {
-    if(gamut1[i].constructor != String && onlyStrings)
-      continue;
-    map[gamut1[i]] = parseSound.lowestUnusedSound(gamut2, gamut1[i]);
-    gamut2.push(map[gamut1[i]])
-  }
-
-  this.mapSoundsToSelf(map);
-
   return this;
 }
 
@@ -243,11 +222,11 @@ PianoRoll.prototype.__defineGetter__("lastP", function() {
     return false;
 });
 
-PianoRoll.prototype.arpPoke = function(n, harmony, gamut, subD) {
+/*PianoRoll.prototype.arpPoke = function(n, harmony, gamut, subD) {
     this.qPoke(n, gamut, subD);
     Arp(this, harmony);
     return this;
-}
+}*/
 PianoRoll.prototype.qPoke = function(n, gamut, subD) {
     subD = subD || 1;
     gamut = gamut || [">s1", ">s-1", "<h0", "<h1", "<h-1", "<h2", "<h-2"];
@@ -276,11 +255,6 @@ PianoRoll.prototype.countAttacks = function(t0, t1) {
     return n;
 }
 
-// special point track functions (as opposed to StepTrack)
-
-PianoRoll.prototype.toStepTrack = function() {
-    return convertTracks.PianoRoll_to_StepTrack(this);
-}
 PianoRoll.prototype.sortNotes = function() {
     this.notes = this.notes.sort(function(a,b) {
         return a.t - b.t;
@@ -401,9 +375,6 @@ PianoRoll.prototype.randomNote = function() {
 
 
 var duplicate = require("./duplicate.js");
-var VoiceTrack = require("../VoiceTrack.js");
-var convertTracks = require("../convertTracks.js");
-var pitch = require("../pitch.js");
-var Arp = require("../Arp.js");
-var parseSound = require("../parseSound.js")
+var pitch = require("./pitch.js");
+//var Arp = require("../Arp.js");
 const gcd = require("compute-gcd")

@@ -1,6 +1,4 @@
 
-var parseSound = require("../parseSound.js")
-
 module.exports = (PianoRoll) => {
 
 
@@ -56,13 +54,6 @@ module.exports = (PianoRoll) => {
       return self.indexOf(value) == i;
     }).sort()
   })
-
-
-  PianoRoll.prototype.lowestUnusedSound = function(sound) {
-    // UNTESTED!!
-    var gamut = this.gamut;
-    return parseSound.lowestUnusedSound(gamut, sound);
-  }
 
   PianoRoll.prototype.__defineGetter__("sounds", function() {
       // list all sounds in the track, including duplicates. Used for iterative processing

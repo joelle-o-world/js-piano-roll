@@ -1,8 +1,8 @@
 
 //const organise = require("../../organise.js");
-var midi = require("../midi.js");
+var midi = require("./midi");
 
-module.exports => (PianoRoll) => {
+module.exports = (PianoRoll) => {
   PianoRoll.prototype.saveMidiFile = function(filename) {
       if(filename == undefined) {
           throw "no filename provided";

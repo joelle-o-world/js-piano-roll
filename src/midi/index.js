@@ -1,6 +1,6 @@
 var midiConverter = require("midi-converter");
 var midiRef = require("./midiRef.js");
-var PianoRoll = require("./PianoRoll.js");
+var PianoRoll = require("../PianoRoll.js");
 var MeterTrack = require("./MeterTrack.js");
 var Ensemble = require("./Ensemble.js");
 
