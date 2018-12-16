@@ -226,7 +226,7 @@ PianoRoll.prototype.__defineGetter__("lastP", function() {
     this.qPoke(n, gamut, subD);
     Arp(this, harmony);
     return this;
-}*/
+}
 PianoRoll.prototype.qPoke = function(n, gamut, subD) {
     subD = subD || 1;
     gamut = gamut || [">s1", ">s-1", "<h0", "<h1", "<h-1", "<h2", "<h-2"];
@@ -243,7 +243,7 @@ PianoRoll.prototype.qPoke = function(n, gamut, subD) {
 
     if(n > 1) return this.qPoke(n-1, gamut, subD);
     else return this;
-}
+}*/
 
 PianoRoll.prototype.countAttacks = function(t0, t1) {
     t0 = t0 || 0;
