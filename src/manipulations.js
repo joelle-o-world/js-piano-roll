@@ -19,7 +19,7 @@ module.exports = (PianoRoll) => {
   }
 
 
-  PianoRoll.prototype.cut = function(t1, t2, keepOverhangs) {
+  PianoRoll.prototype.slice = function(t1, t2, keepOverhangs) {
     var newTrack = new this.constructor(this).zerofy();
     newTrack.d = t2-t1;
     for(var i=0; i<this.notes.length; i++) {
@@ -44,6 +44,7 @@ module.exports = (PianoRoll) => {
     }
     return newTrack;
   }
+  PianoRoll.prototype.cut = PianoRoll.prototype.slice
 
   PianoRoll.prototype.transpose = function(semitones) {
     for(var i in this.notes) {
